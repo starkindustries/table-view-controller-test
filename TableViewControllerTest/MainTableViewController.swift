@@ -44,7 +44,7 @@ class InputTableView: UITableView, UITableViewDataSource {
     }
 }
 
-class ViewController: UITableViewController {
+class MainTableViewController: UITableViewController {
     
     @IBOutlet weak var specialTextField: UITextField!
     
