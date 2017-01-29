@@ -23,7 +23,7 @@ class InputTableView: UITableView, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         print("tableView numberOfRowsInSection")
-        return 4
+        return 3
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -40,7 +40,7 @@ class InputTableView: UITableView, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         print("tableView titleForHeaderInSection")
-        return nil
+        return "Test Title"
     }
 }
 
