@@ -8,10 +8,14 @@
 
 import UIKit
 
-class InputTableView: UITableView, UITableViewDataSource {
+class InputTableView: UITableView, UITableViewDataSource, UITableViewDelegate {
     
-    func setupTableView(){
+    var mainTable: MainTableProtocol!
+    
+    func setupTableView(_mainTable: MainTableProtocol){
         self.dataSource = self
+        self.delegate = self
+        mainTable = _mainTable
     }
     
     // MARK: - TableView DataSource
@@ -23,7 +27,7 @@ class InputTableView: UITableView, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         print("tableView numberOfRowsInSection")
-        return 1
+        return 7
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -42,9 +46,24 @@ class InputTableView: UITableView, UITableViewDataSource {
         print("tableView titleForHeaderInSection")
         return "Test Title"
     }
+    
+    // MARK: - TableViewDelegate
+    // https://developer.apple.com/reference/uikit/uitableviewdelegate
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        print("selected row at " + indexPath.description)
+        mainTable.didSelectRow(tableView: tableView, indexPath: indexPath)
+    }
+    
+    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+        print("deselected row at " + indexPath.description)
+    }
 }
 
-class MainTableViewController: UITableViewController {
+protocol MainTableProtocol: class {
+    func didSelectRow(tableView: UITableView, indexPath: IndexPath)
+}
+
+class MainTableViewController: UITableViewController, MainTableProtocol {
     
     @IBOutlet weak var specialTextField: UITextField!
     
@@ -53,8 +72,7 @@ class MainTableViewController: UITableViewController {
         // Do any additional setup after loading the view, typically from a nib.
         let frame = CGRect(x: self.view.frame.minX, y: self.view.frame.minY, width: self.view.frame.width, height: 200.0)
         let inputTableView = InputTableView(frame: frame)
-        inputTableView.setupTableView()
-        inputTableView.delegate = self
+        inputTableView.setupTableView(_mainTable: self)
         specialTextField.inputView = inputTableView
     }
     
@@ -63,14 +81,10 @@ class MainTableViewController: UITableViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    // MARK: - TableViewDelegate
-    // https://developer.apple.com/reference/uikit/uitableviewdelegate
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("selected row at " + indexPath.description)
-    }
-    
-    override func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-        print("deselected row at " + indexPath.description)
+    // MARK: - MainTableProtocol
+    func didSelectRow(tableView: UITableView, indexPath: IndexPath){
+        print("protocol test: " + indexPath.description)
+        specialTextField.text = tableView.cellForRow(at: indexPath)?.textLabel?.text!
     }
 }
 
