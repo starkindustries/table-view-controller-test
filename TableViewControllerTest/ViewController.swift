@@ -55,7 +55,6 @@ class ViewController: UITableViewController {
         let inputTableView = InputTableView(frame: frame)
         inputTableView.setupTableView()
         inputTableView.delegate = self
-        //tableView.dataSource = self
         specialTextField.inputView = inputTableView
     }
     
