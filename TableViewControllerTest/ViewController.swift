@@ -8,10 +8,11 @@
 
 import UIKit
 
-class InputTableView: UITableView, UITableViewDataSource {
+class InputTableView: UITableView, UITableViewDataSource, UITableViewDelegate {
     
     func setupTableView(){
         self.dataSource = self
+        self.delegate = self
     }
     
     // MARK: - TableView DataSource
@@ -23,7 +24,7 @@ class InputTableView: UITableView, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         print("tableView numberOfRowsInSection")
-        return 1
+        return 8
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -54,7 +55,6 @@ class ViewController: UITableViewController {
         let frame = CGRect(x: self.view.frame.minX, y: self.view.frame.minY, width: self.view.frame.width, height: 200.0)
         let inputTableView = InputTableView(frame: frame)
         inputTableView.setupTableView()
-        inputTableView.delegate = self
         specialTextField.inputView = inputTableView
     }
     
