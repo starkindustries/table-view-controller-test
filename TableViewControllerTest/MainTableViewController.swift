@@ -51,7 +51,11 @@ class InputTableView: UITableView, UITableViewDataSource, UITableViewDelegate {
     // https://developer.apple.com/reference/uikit/uitableviewdelegate
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print("selected row at " + indexPath.description)
-        mainTable.didSelectRow(tableView: tableView, indexPath: indexPath)
+        
+        let selectedText = tableView.cellForRow(at: indexPath)?.textLabel?.text ?? ""
+        print("selected text: \(selectedText)")
+        
+        mainTable.didSelectText(text: selectedText)
     }
     
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
@@ -60,7 +64,7 @@ class InputTableView: UITableView, UITableViewDataSource, UITableViewDelegate {
 }
 
 protocol MainTableProtocol: class {
-    func didSelectRow(tableView: UITableView, indexPath: IndexPath)
+    func didSelectText(text: String)
 }
 
 class MainTableViewController: UITableViewController, MainTableProtocol {
@@ -82,9 +86,9 @@ class MainTableViewController: UITableViewController, MainTableProtocol {
     }
     
     // MARK: - MainTableProtocol
-    func didSelectRow(tableView: UITableView, indexPath: IndexPath){
-        print("protocol test: " + indexPath.description)
-        specialTextField.text = tableView.cellForRow(at: indexPath)?.textLabel?.text!
+    func didSelectText(text: String){
+        print("protocol text: " + text)
+        specialTextField.text = text
     }
 }
 
