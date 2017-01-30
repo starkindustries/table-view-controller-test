@@ -10,12 +10,12 @@ import UIKit
 
 class InputTableView: UITableView, UITableViewDataSource, UITableViewDelegate {
     
-    var mainTable: MainTableProtocol!
+    var didSelectCallback: ((_ text: String) -> Void)!
     
-    func setupTableView(_mainTable: MainTableProtocol){
+    func setupTableView(didSelectCallback: @escaping (_ text: String)-> Void){
         self.dataSource = self
         self.delegate = self
-        mainTable = _mainTable
+        self.didSelectCallback = didSelectCallback
     }
     
     // MARK: - TableView DataSource
@@ -55,7 +55,7 @@ class InputTableView: UITableView, UITableViewDataSource, UITableViewDelegate {
         let selectedText = tableView.cellForRow(at: indexPath)?.textLabel?.text ?? ""
         print("selected text: \(selectedText)")
         
-        mainTable.didSelectText(text: selectedText)
+        didSelectCallback(selectedText)
     }
     
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
@@ -63,11 +63,7 @@ class InputTableView: UITableView, UITableViewDataSource, UITableViewDelegate {
     }
 }
 
-protocol MainTableProtocol: class {
-    func didSelectText(text: String)
-}
-
-class MainTableViewController: UITableViewController, MainTableProtocol {
+class MainTableViewController: UITableViewController {
     
     @IBOutlet weak var specialTextField: UITextField!
     
@@ -76,7 +72,12 @@ class MainTableViewController: UITableViewController, MainTableProtocol {
         // Do any additional setup after loading the view, typically from a nib.
         let frame = CGRect(x: self.view.frame.minX, y: self.view.frame.minY, width: self.view.frame.width, height: 200.0)
         let inputTableView = InputTableView(frame: frame)
-        inputTableView.setupTableView(_mainTable: self)
+        
+        inputTableView.setupTableView(didSelectCallback: { [weak self] text in
+            print("callback with: \(text)")
+            self?.specialTextField.text = text
+        })
+        
         specialTextField.inputView = inputTableView
     }
     
@@ -85,10 +86,5 @@ class MainTableViewController: UITableViewController, MainTableProtocol {
         // Dispose of any resources that can be recreated.
     }
     
-    // MARK: - MainTableProtocol
-    func didSelectText(text: String){
-        print("protocol text: " + text)
-        specialTextField.text = text
-    }
 }
 
