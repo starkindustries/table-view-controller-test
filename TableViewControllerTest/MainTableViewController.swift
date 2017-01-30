@@ -10,12 +10,12 @@ import UIKit
 
 class InputTableView: UITableView, UITableViewDataSource, UITableViewDelegate {
     
-    var mainTable: MainTableProtocol!
+    var didSelectText: ((_ text: String) -> Void)!
     
-    func setupTableView(_mainTable: MainTableProtocol){
+    func setupTableView(didSelectText: @escaping (_ text: String)-> Void){
         self.dataSource = self
         self.delegate = self
-        mainTable = _mainTable
+        self.didSelectText = didSelectText
     }
     
     // MARK: - TableView DataSource
@@ -51,7 +51,11 @@ class InputTableView: UITableView, UITableViewDataSource, UITableViewDelegate {
     // https://developer.apple.com/reference/uikit/uitableviewdelegate
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print("selected row at " + indexPath.description)
-        mainTable.didSelectRow(tableView: tableView, indexPath: indexPath)
+        
+        let selectedText = tableView.cellForRow(at: indexPath)?.textLabel?.text ?? ""
+        print("selected text: \(selectedText)")
+        
+        didSelectText(selectedText)
     }
     
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
@@ -59,11 +63,7 @@ class InputTableView: UITableView, UITableViewDataSource, UITableViewDelegate {
     }
 }
 
-protocol MainTableProtocol: class {
-    func didSelectRow(tableView: UITableView, indexPath: IndexPath)
-}
-
-class MainTableViewController: UITableViewController, MainTableProtocol {
+class MainTableViewController: UITableViewController {
     
     @IBOutlet weak var specialTextField: UITextField!
     
@@ -72,7 +72,12 @@ class MainTableViewController: UITableViewController, MainTableProtocol {
         // Do any additional setup after loading the view, typically from a nib.
         let frame = CGRect(x: self.view.frame.minX, y: self.view.frame.minY, width: self.view.frame.width, height: 200.0)
         let inputTableView = InputTableView(frame: frame)
-        inputTableView.setupTableView(_mainTable: self)
+        
+        inputTableView.setupTableView(didSelectText: { [weak self] text in
+            print("callback with: \(text)")
+            self?.specialTextField.text = text
+        })
+        
         specialTextField.inputView = inputTableView
     }
     
@@ -81,10 +86,5 @@ class MainTableViewController: UITableViewController, MainTableProtocol {
         // Dispose of any resources that can be recreated.
     }
     
-    // MARK: - MainTableProtocol
-    func didSelectRow(tableView: UITableView, indexPath: IndexPath){
-        print("protocol test: " + indexPath.description)
-        specialTextField.text = tableView.cellForRow(at: indexPath)?.textLabel?.text!
-    }
 }
 
