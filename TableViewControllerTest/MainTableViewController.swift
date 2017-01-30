@@ -10,12 +10,12 @@ import UIKit
 
 class InputTableView: UITableView, UITableViewDataSource, UITableViewDelegate {
     
-    var didSelectCallback: ((_ text: String) -> Void)!
+    var didSelectText: ((_ text: String) -> Void)!
     
-    func setupTableView(didSelectCallback: @escaping (_ text: String)-> Void){
+    func setupTableView(didSelectText: @escaping (_ text: String)-> Void){
         self.dataSource = self
         self.delegate = self
-        self.didSelectCallback = didSelectCallback
+        self.didSelectText = didSelectText
     }
     
     // MARK: - TableView DataSource
@@ -55,7 +55,7 @@ class InputTableView: UITableView, UITableViewDataSource, UITableViewDelegate {
         let selectedText = tableView.cellForRow(at: indexPath)?.textLabel?.text ?? ""
         print("selected text: \(selectedText)")
         
-        didSelectCallback(selectedText)
+        didSelectText(selectedText)
     }
     
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
@@ -73,7 +73,7 @@ class MainTableViewController: UITableViewController {
         let frame = CGRect(x: self.view.frame.minX, y: self.view.frame.minY, width: self.view.frame.width, height: 200.0)
         let inputTableView = InputTableView(frame: frame)
         
-        inputTableView.setupTableView(didSelectCallback: { [weak self] text in
+        inputTableView.setupTableView(didSelectText: { [weak self] text in
             print("callback with: \(text)")
             self?.specialTextField.text = text
         })
